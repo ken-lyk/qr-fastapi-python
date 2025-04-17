@@ -46,7 +46,6 @@ qr-fastapi-python/
 │   ├── config.py          # Loads environment variables using Pydantic Settings
 │   └── database.py        # Database connection setup (SQLAlchemy)
 ├── models/
-│   ├── models.py          # Base model and relationship configurations (if applicable)
 │   ├── qrModel.py         # SQLAlchemy model for QR data
 │   └── userModel.py       # SQLAlchemy model for User data
 ├── routers/
