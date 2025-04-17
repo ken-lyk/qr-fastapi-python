@@ -7,7 +7,7 @@ A FastAPI application to generate QR codes.
 1.  **Clone the repository:**
     ```bash
     git clone <repository-url>
-    cd qr-fastapi
+    cd qr-fastapi-python
     ```
 
 2.  **Create a virtual environment:**
@@ -40,7 +40,7 @@ A FastAPI application to generate QR codes.
 ## Project Structure
 
 ```
-qr-fastapi/
+qr-fastapi-python/
 ├── .venv/                 # Virtual environment directory
 ├── config/
 │   ├── config.py          # Loads environment variables using Pydantic Settings
@@ -74,10 +74,10 @@ Then, run uvicorn specifying the package and module:
 
 ```bash
 cd .. # Navigate one level up from qr-fastapi directory
-python -m uvicorn qr-fastapi.main:app --reload
+python -m uvicorn qr-fastapi-python.main:app --reload
 ```
 
-(Note: This method explicitly tells Python where to find the `main` module within the `qr-fastapi` package, which is necessary due to the relative imports used in the project.)
+(Note: This method explicitly tells Python where to find the `main` module within the `qr-fastapi-python` package, which is necessary due to the relative imports used in the project.)
 
 The API will be available at `http://127.0.0.1:8000/docs`.
 
