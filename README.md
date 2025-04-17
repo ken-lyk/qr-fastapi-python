@@ -103,6 +103,14 @@ If the project uses a database:
 1.  Set up your database according to the configuration in `.env`.
 2.  Run any necessary migrations or use the provided `seed.sql` file to initialize data.
 
+### Updating Seed User Password
+
+If you need to update the password for a user initially created by the `seed.sql` script (or similar seeding mechanism), follow these steps:
+
+1.  **Ensure `SECRET_KEY` is Correct:** Verify that the `SECRET_KEY` in your `.env` file is the one currently used by the running application. The password hash depends on this key.
+2.  **Generate New Hash:** Create a temporary new user through the registration API endpoint (`/users/`) with the desired new password. Note the hashed password generated for this temporary user.
+3.  **Update Database:** Manually connect to your database. Locate the original seed user record in the relevant table (e.g., `users`). Update the `hashed_password` column for that user with the new hash obtained in the previous step. You can then delete the temporary user.
+
 ## Troubleshooting
 
 ### `AttributeError: module 'bcrypt' has no attribute '__about__'`
