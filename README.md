@@ -102,3 +102,17 @@ If the project uses a database:
 
 1.  Set up your database according to the configuration in `.env`.
 2.  Run any necessary migrations or use the provided `seed.sql` file to initialize data.
+
+## Troubleshooting
+
+### `AttributeError: module 'bcrypt' has no attribute '__about__'`
+
+If you encounter this error when running the application, it might be due to an incompatibility between specific versions of the `passlib` and `bcrypt` libraries.
+
+The error typically occurs in `passlib/handlers/bcrypt.py` on a line similar to:
+`version = _bcrypt.__about__.__version__`
+
+A potential workaround is to manually edit this line in your virtual environment's installed `passlib` package to:
+`version = _bcrypt.__version__`
+
+Alternatively, check for updated versions of `passlib` or `bcrypt` that might resolve this issue, or pin specific compatible versions in your `requirements.txt`.
