@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -37,3 +37,22 @@ def get_user(db: Session = Depends(database.get_db), current_user: models.User =
                             detail=f"No user list")
 
     return userList
+
+@router.delete('/{id}', status_code=status.HTTP_200_OK)
+def delete_user(id: str,db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+    if not oauth2.isAdmin(current_user):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"User is not admin")
+    userQuery = db.query(models.User).filter(models.User.id == id)
+    
+    user = userQuery.first()
+    
+    if user == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"user with id: {id} does not exist")
+
+    userQuery.delete(synchronize_session=False)
+    db.commit()
+    
+    return "User deleted successfully"
+
