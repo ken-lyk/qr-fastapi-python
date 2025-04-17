@@ -8,7 +8,7 @@ import uuid
 from ..config import database
 from ..schemas import schemas, userSchemas
 from ..utility.oauth2 import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
-from ..models import models
+from ..models import userModel
 from ..config.config import settings
 from ..utility.enums import UserRoleEnum
 
@@ -30,7 +30,7 @@ def get_password_hash(password: str) -> str:
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=userSchemas.User)
 def login(userRegisterObject: userSchemas.UserCreate, db: Session = Depends(database.get_db)):
     # Check if user already exists
-    existingUser = db.query(models.User).filter(models.User.email == userRegisterObject.email).first()
+    existingUser = db.query(userModel.User).filter(userModel.User.email == userRegisterObject.email).first()
     if existingUser:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -40,7 +40,7 @@ def login(userRegisterObject: userSchemas.UserCreate, db: Session = Depends(data
     hashed_password = get_password_hash(userRegisterObject.password)
 
     # Create the user object to be stored in the "database"
-    newUser = models.User(
+    newUser = userModel.User(
         id= str(uuid.uuid4()),
         name=userRegisterObject.name,
         email=userRegisterObject.email,
@@ -58,7 +58,7 @@ def login(userRegisterObject: userSchemas.UserCreate, db: Session = Depends(data
 
 @router.post('/login', response_model=schemas.Token)
 def login(userLoginObject: userSchemas.UserLoginObject, db: Session = Depends(database.get_db)):
-    existingUser = db.query(models.User).filter(models.User.email == userLoginObject.email).first()
+    existingUser = db.query(userModel.User).filter(userModel.User.email == userLoginObject.email).first()
     
     if not existingUser or not verify_password(userLoginObject.password, existingUser.password):
         raise HTTPException(
@@ -85,7 +85,7 @@ def login(userLoginObject: userSchemas.UserLoginObject, db: Session = Depends(da
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     print('userCred',user_credentials)
     
-    existingUser = db.query(models.User).filter(models.User.email == user_credentials.username).first()
+    existingUser = db.query(userModel.User).filter(userModel.User.email == user_credentials.username).first()
     
     if not existingUser or not verify_password(user_credentials.password, existingUser.password):
         raise HTTPException(

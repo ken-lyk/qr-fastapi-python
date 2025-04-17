@@ -7,7 +7,7 @@ from typing import Annotated, List
 from ..utility import oauth2, qrUtil
 from ..config import database
 from ..schemas import qrSchemas
-from ..models import models
+from ..models import qrModel, userModel
 from ..utility.enums import QRSourceEnum
 
 router = APIRouter(
@@ -16,12 +16,12 @@ router = APIRouter(
 )
 
 @router.get('/{id}', response_model=qrSchemas.QR)
-def get_qr(id: str, db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def get_qr(id: str, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     isAdmin = oauth2.isAdmin(current_user)
     if isAdmin:  
-        qr = db.query(models.QR).filter(models.QR.id == id).first()
+        qr = db.query(qrModel.QR).filter(qrModel.QR.id == id).first()
     else:
-        qr = db.query(models.QR).filter(models.QR.id == id & models.QR.user_id == current_user.id).first()
+        qr = db.query(qrModel.QR).filter(qrModel.QR.id == id & qrModel.QR.user_id == current_user.id).first()
     
     if not qr:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -30,12 +30,12 @@ def get_qr(id: str, db: Session = Depends(database.get_db), current_user: models
     return qr
 
 @router.get('/', response_model= List[qrSchemas.QR])
-def get_qr(db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def get_qr(db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     isAdmin = oauth2.isAdmin(current_user)
     if isAdmin:  
-        qrList = db.query(models.QR).all()
+        qrList = db.query(qrModel.QR).all()
     else:
-        qrList = db.query(models.QR).filter(models.QR.user_id == current_user.id).all()
+        qrList = db.query(qrModel.QR).filter(qrModel.QR.user_id == current_user.id).all()
         
     if len(qrList) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -44,8 +44,8 @@ def get_qr(db: Session = Depends(database.get_db), current_user: models.User = D
     return qrList
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=qrSchemas.QR)
-def create_qr(qr: qrSchemas.QRBase, db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
-    newQr = models.QR(
+def create_qr(qr: qrSchemas.QRBase, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+    newQr = qrModel.QR(
         id=str(uuid.uuid4()),
         path=qr.path,
         data=qr.data,
@@ -61,7 +61,7 @@ def create_qr(qr: qrSchemas.QRBase, db: Session = Depends(database.get_db), curr
     return newQr
 
 @router.post('/qr-image-data', status_code=status.HTTP_201_CREATED, response_model=qrSchemas.QR)
-def create_qr_image_data(qr: qrSchemas.QRBase, db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def create_qr_image_data(qr: qrSchemas.QRBase, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     qrData = ''
     try:
         qrData = qrUtil.decode_qr_from_base64(qr.data + '==')
@@ -70,7 +70,7 @@ def create_qr_image_data(qr: qrSchemas.QRBase, db: Session = Depends(database.ge
     
     print('qrData', qrData)
     if qrData != '' and len(qrData) > 0:
-        newQr = models.QR(
+        newQr = qrModel.QR(
             id=str(uuid.uuid4()),
             path=qr.path,
             data=qrData,
@@ -89,7 +89,7 @@ def create_qr_image_data(qr: qrSchemas.QRBase, db: Session = Depends(database.ge
         
         
 @router.post('/qr-image-file', status_code=status.HTTP_201_CREATED, response_model=qrSchemas.QR)
-def create_qr_image_file(file: Annotated[UploadFile, File(description="Only Image file")] = None, db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def create_qr_image_file(file: Annotated[UploadFile, File(description="Only Image file")] = None, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     print('file from url',file)
     qrData = ''
     try:
@@ -99,7 +99,7 @@ def create_qr_image_file(file: Annotated[UploadFile, File(description="Only Imag
         print('error', e)
     
     if qrData != '' and len(qrData) > 0:
-        newQr = models.QR(
+        newQr = qrModel.QR(
             id=str(uuid.uuid4()),
             path=file.filename,
             data=qrData,
@@ -119,11 +119,11 @@ def create_qr_image_file(file: Annotated[UploadFile, File(description="Only Imag
         
 
 @router.delete('/{id}', status_code=status.HTTP_200_OK)
-def delete_qr(id: str,db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def delete_qr(id: str,db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
-    qrQuery = db.query(models.QR).filter(models.QR.id == id)
+    qrQuery = db.query(qrModel.QR).filter(qrModel.QR.id == id)
     
     qr = qrQuery.first()
     

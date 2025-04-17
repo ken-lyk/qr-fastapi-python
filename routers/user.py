@@ -5,7 +5,7 @@ from typing import List
 from ..utility import oauth2
 from ..config import database
 from ..schemas import userSchemas
-from ..models import models
+from ..models import userModel
 
 router = APIRouter(
     prefix="/users",
@@ -13,11 +13,11 @@ router = APIRouter(
 )
 
 @router.get('/{id}', response_model=userSchemas.User)
-def get_user(id: str, db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def get_user(id: str, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
-    user = db.query(models.User).filter(models.User.id == id).first()
+    user = db.query(userModel.User).filter(userModel.User.id == id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"User with id: {id} does not exist")
@@ -27,11 +27,11 @@ def get_user(id: str, db: Session = Depends(database.get_db), current_user: mode
 
 
 @router.get('/', response_model= List[userSchemas.User])
-def get_user(db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def get_user(db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
-    userList = db.query(models.User).all()
+    userList = db.query(userModel.User).all()
     if len(userList) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No user list")
@@ -39,11 +39,11 @@ def get_user(db: Session = Depends(database.get_db), current_user: models.User =
     return userList
 
 @router.delete('/{id}', status_code=status.HTTP_200_OK)
-def delete_user(id: str,db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+def delete_user(id: str,db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
-    userQuery = db.query(models.User).filter(models.User.id == id)
+    userQuery = db.query(userModel.User).filter(userModel.User.id == id)
     
     user = userQuery.first()
     

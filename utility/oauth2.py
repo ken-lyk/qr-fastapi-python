@@ -7,7 +7,7 @@ from ..config import database
 
 from ..schemas import schemas
 
-from ..models import models
+from ..models import userModel
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -59,8 +59,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
                                 detail=f"Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
 
     token = verify_access_token(token, credentials_exception)
-    user = db.query(models.User).filter(models.User.id == str(token.id)).first()
+    user = db.query(userModel.User).filter(userModel.User.id == str(token.id)).first()
     return user
 
-def isAdmin(user: models.User):
+def isAdmin(user: userModel.User):
     return user.role == enums.UserRoleEnum.ADMIN
