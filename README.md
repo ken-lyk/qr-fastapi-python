@@ -94,7 +94,30 @@ The API will be available at `http://127.0.0.1:8000/docs`.
 
 ## API Endpoints
 
-*(Describe the available API endpoints here, e.g., POST /qr, GET /qr/{id})*
+Here are the available API endpoints:
+
+**Authentication (`/auth`)**
+
+*   `POST /auth/register`: Register a new user.
+*   `POST /auth/login`: Log in using email and password, returns a JWT token.
+*   `POST /auth/token`: Log in using `OAuth2PasswordRequestForm` (typically used by Swagger UI/FastAPI docs), returns a JWT token.
+
+**QR Codes (`/qr`)**
+
+*   `GET /qr/{id}`: Get details of a specific QR code by its ID (requires authentication).
+*   `GET /qr/`: Get a list of all QR codes for the current user (or all QR codes if the user is an admin) (requires authentication).
+*   `POST /qr/`: Create a new QR code record from direct data (requires authentication).
+*   `POST /qr/qr-image-data`: Create a new QR code record by decoding Base64 image data (requires authentication).
+*   `POST /qr/qr-image-file`: Create a new QR code record by decoding an uploaded image file (requires authentication).
+*   `DELETE /qr/{id}`: Delete a specific QR code by its ID (requires admin privileges).
+
+**Users (`/users`)**
+
+*   `GET /users/{id}`: Get details of a specific user by ID (requires admin privileges).
+*   `GET /users/`: Get a list of all users (requires admin privileges).
+*   `DELETE /users/{id}`: Delete a specific user by ID (requires admin privileges).
+
+*(Note: Authentication details (e.g., sending the Bearer token) are handled via standard FastAPI mechanisms. Refer to the `/docs` endpoint for interactive testing and schema details.)*
 
 ## Database (Optional)
 
