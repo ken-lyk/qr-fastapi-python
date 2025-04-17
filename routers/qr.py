@@ -25,7 +25,7 @@ def get_qr(id: str, db: Session = Depends(database.get_db), current_user: models
     
     if not qr:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"User with id: {id} does not exist")
+                            detail=f"QR with id: {id} does not exist")
 
     return qr
 
@@ -117,4 +117,22 @@ def create_qr_image_file(file: Annotated[UploadFile, File(description="Only Imag
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"QR Image is not valid. Please try with other QR.")
         
-        
+
+@router.delete('/{id}', status_code=status.HTTP_200_OK)
+def delete_qr(id: str,db: Session = Depends(database.get_db), current_user: models.User = Depends(oauth2.get_current_user)):
+    if not oauth2.isAdmin(current_user):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"User is not admin")
+    qrQuery = db.query(models.QR).filter(models.QR.id == id)
+    
+    qr = qrQuery.first()
+    
+    if qr == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"QR with id: {id} does not exist")
+
+    qrQuery.delete(synchronize_session=False)
+    db.commit()
+    
+    return "QR deleted successfully"
+
