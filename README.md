@@ -52,8 +52,7 @@ qr-fastapi-python/
 ├── routers/
 │   ├── auth.py            # Authentication endpoints (login, register, token)
 │   ├── qr.py              # QR code management endpoints
-│   ├── user.py            # User management endpoints
-│   └── __init__.py        # Makes 'routers' a Python package
+│   └── user.py            # User management endpoints
 ├── schemas/
 │   ├── qrSchemas.py       # Pydantic schemas for QR code data
 │   ├── schemas.py         # Common/Base Pydantic schemas
