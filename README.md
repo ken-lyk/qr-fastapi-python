@@ -65,7 +65,6 @@ qr-fastapi-python/
 ├── .env                   # Environment variables (DATABASE_*, SECRET_KEY, etc.) - **DO NOT COMMIT**
 ├── .gitignore             # Specifies intentionally untracked files that Git should ignore
 ├── main.py                # Main FastAPI application entry point
-├── notes                  # User notes file
 ├── requirements.txt       # Project dependencies
 ├── readme.md              # This file
 └── seed.sql               # Optional SQL script for initial database seeding
