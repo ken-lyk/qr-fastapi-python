@@ -79,7 +79,7 @@ python -m uvicorn qr-fastapi.main:app --reload
 
 (Note: This method explicitly tells Python where to find the `main` module within the `qr-fastapi` package, which is necessary due to the relative imports used in the project.)
 
-The API will be available at `http://127.0.0.1:8000`.
+The API will be available at `http://127.0.0.1:8000/docs`.
 
 ## API Endpoints
 
