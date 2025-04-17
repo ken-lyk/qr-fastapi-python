@@ -68,12 +68,23 @@ qr-fastapi-python/
 
 ## Running the Application
 
-To run the FastAPI application, navigate to the directory *containing* your project folder (`qr-fastapi`). Make sure your virtual environment (located inside `qr-fastapi/.venv/`) is activated.
+**Recommended (Development):**
+
+Ensure your virtual environment is activated. Navigate to the project root directory (`qr-fastapi-python`). Then run:
+
+```bash
+fastapi dev main.py
+```
+This command automatically handles reloading and is generally preferred for development.
+
+**Alternative (Using Uvicorn directly):**
+
+Navigate to the directory *containing* your project folder (`qr-fastapi-python`). Make sure your virtual environment (located inside `qr-fastapi-python/.venv/`) is activated.
 
 Then, run uvicorn specifying the package and module:
 
 ```bash
-cd .. # Navigate one level up from qr-fastapi directory
+cd .. # Navigate one level up from qr-fastapi-python directory
 python -m uvicorn qr-fastapi-python.main:app --reload
 ```
 
