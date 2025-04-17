@@ -1,6 +1,6 @@
-# QR Code Generator API
+# QR Reader FastAPI Python API
 
-A FastAPI application to generate QR codes.
+A FastAPI application to read QR codes.
 
 ## Setup
 
