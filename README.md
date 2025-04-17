@@ -68,11 +68,16 @@ qr-fastapi/
 
 ## Running the Application
 
-Use uvicorn to run the FastAPI application:
+To run the FastAPI application, navigate to the directory *containing* your project folder (`qr-fastapi`). Make sure your virtual environment (located inside `qr-fastapi/.venv/`) is activated.
+
+Then, run uvicorn specifying the package and module:
 
 ```bash
-uvicorn main:app --reload
+cd .. # Navigate one level up from qr-fastapi directory
+python -m uvicorn qr-fastapi.main:app --reload
 ```
+
+(Note: This method explicitly tells Python where to find the `main` module within the `qr-fastapi` package, which is necessary due to the relative imports used in the project.)
 
 The API will be available at `http://127.0.0.1:8000`.
 
@@ -86,11 +91,3 @@ If the project uses a database:
 
 1.  Set up your database according to the configuration in `.env`.
 2.  Run any necessary migrations or use the provided `seed.sql` file to initialize data.
-
-## Contributing
-
-*(Add guidelines for contributing if applicable)*
-
-## License
-
-*(Specify the project license)*
