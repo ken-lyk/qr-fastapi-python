@@ -7,7 +7,7 @@ from ..config import database
 
 from ..schemas import schemas
 
-from .. import models
+from ..models import models
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session

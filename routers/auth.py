@@ -8,7 +8,7 @@ import uuid
 from ..config import database
 from ..schemas import schemas, userSchemas
 from ..utility.oauth2 import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
-from .. import models
+from ..models import models
 from ..config.config import settings
 from ..utility.enums import UserRoleEnum
 

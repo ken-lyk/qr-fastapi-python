@@ -5,7 +5,7 @@ from typing import List
 from ..utility import oauth2
 from ..config import database
 from ..schemas import userSchemas
-from .. import models
+from ..models import models
 
 router = APIRouter(
     prefix="/users",

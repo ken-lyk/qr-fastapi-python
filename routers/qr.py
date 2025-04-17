@@ -7,7 +7,7 @@ from typing import Annotated, List
 from ..utility import oauth2, qrUtil
 from ..config import database
 from ..schemas import qrSchemas
-from .. import models
+from ..models import models
 from ..utility.enums import QRSourceEnum
 
 router = APIRouter(

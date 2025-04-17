@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
-from .utility.enums import UserRoleEnum
-from .config.database import Base
+from ..utility.enums import UserRoleEnum
+from ..config.database import Base
 
     
 class QR(Base):
