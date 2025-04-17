@@ -1,0 +1,11 @@
+fastapi[all]
+passlib[bcrypt]
+python-jose[cryptography]
+pydantic[email] # For EmailStr validation
+uvicorn[standard] 
+sqlalchemy
+pydantic-settings
+pymysql
+pyjwt
+pyzbar
+Pillow
