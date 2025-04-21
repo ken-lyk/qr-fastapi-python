@@ -46,12 +46,14 @@ qr-fastapi-python/
 │   ├── config.py          # Loads environment variables using Pydantic Settings
 │   └── database.py        # Database connection setup (SQLAlchemy)
 ├── models/
+│   ├── models.py          # Base model and relationship configurations (if applicable)
 │   ├── qrModel.py         # SQLAlchemy model for QR data
 │   └── userModel.py       # SQLAlchemy model for User data
 ├── routers/
 │   ├── auth.py            # Authentication endpoints (login, register, token)
 │   ├── qr.py              # QR code management endpoints
-│   └── user.py            # User management endpoints
+│   ├── user.py            # User management endpoints
+│   └── __init__.py        # Makes 'routers' a Python package
 ├── schemas/
 │   ├── qrSchemas.py       # Pydantic schemas for QR code data
 │   ├── schemas.py         # Common/Base Pydantic schemas
@@ -63,6 +65,7 @@ qr-fastapi-python/
 ├── .env                   # Environment variables (DATABASE_*, SECRET_KEY, etc.) - **DO NOT COMMIT**
 ├── .gitignore             # Specifies intentionally untracked files that Git should ignore
 ├── main.py                # Main FastAPI application entry point
+├── notes                  # User notes file
 ├── requirements.txt       # Project dependencies
 ├── readme.md              # This file
 └── seed.sql               # Optional SQL script for initial database seeding
@@ -102,7 +105,7 @@ Here are the available API endpoints:
 
 *   `POST /auth/register`: Register a new user.
 *   `POST /auth/login`: Log in using email and password, returns a JWT token.
-*   `POST /auth/token`: Log in using `OAuth2PasswordRequestForm` (typically used by Swagger UI/FastAPI docs), returns a JWT token.
+*   `POST /auth/token`: Log in using `OAuth2PasswordRequestForm` (typically used by Swagger UI/FastAPI docs), returns a JWT token. **Note:** Enter your email address in the `username` field for this endpoint.
 
 **QR Codes (`/qr`)**
 
@@ -126,4 +129,26 @@ Here are the available API endpoints:
 If the project uses a database:
 
 1.  Set up your database according to the configuration in `.env`.
-2.  Run any necessary migrations or use the provided `seed.sql`
+2.  Run any necessary migrations or use the provided `seed.sql` file to initialize data.
+
+### Updating Seed User Password
+
+If you need to update the password for a user initially created by the `seed.sql` script (or similar seeding mechanism), follow these steps:
+
+1.  **Ensure `SECRET_KEY` is Correct:** Verify that the `SECRET_KEY` in your `.env` file is the one currently used by the running application. The password hash depends on this key.
+2.  **Generate New Hash:** Create a temporary new user through the registration API endpoint (`/users/`) with the desired new password. Note the hashed password generated for this temporary user.
+3.  **Update Database:** Manually connect to your database. Locate the original seed user record in the relevant table (e.g., `users`). Update the `hashed_password` column for that user with the new hash obtained in the previous step. You can then delete the temporary user.
+
+## Troubleshooting
+
+### `AttributeError: module 'bcrypt' has no attribute '__about__'`
+
+If you encounter this error when running the application, it might be due to an incompatibility between specific versions of the `passlib` and `bcrypt` libraries.
+
+The error typically occurs in `passlib/handlers/bcrypt.py` on a line similar to:
+`version = _bcrypt.__about__.__version__`
+
+A potential workaround is to manually edit this line in your virtual environment's installed `passlib` package to:
+`version = _bcrypt.__version__`
+
+Alternatively, check for updated versions of `passlib` or `bcrypt` that might resolve this issue, or pin specific compatible versions in your `requirements.txt`.
