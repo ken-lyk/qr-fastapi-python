@@ -83,8 +83,7 @@ def login(userLoginObject: userSchemas.UserLoginObject, db: Session = Depends(da
 
 @router.post('/token', response_model=schemas.Token)
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
-    print('userCred',user_credentials)
-    
+
     existingUser = db.query(userModel.User).filter(userModel.User.email == user_credentials.username).first()
     
     if not existingUser or not verify_password(user_credentials.password, existingUser.password):

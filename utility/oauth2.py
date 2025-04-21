@@ -15,17 +15,12 @@ from ..config.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-# SECRET_KEY
-# Algorithm
-# Expriation time
-
 SECRET_KEY = settings.secret_key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    """Creates a JWT access token."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -37,7 +32,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 def verify_access_token(token: str, credentials_exception):
-
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("sub")

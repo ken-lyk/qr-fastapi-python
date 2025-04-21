@@ -13,7 +13,6 @@ class UserBase(BaseModel):
 class User(UserBase):
     disabled: Optional[bool] = None
 
-# Represents a user stored in the database (including hashed password)
 class UserInDB(User):
     password: str
     

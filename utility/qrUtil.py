@@ -46,7 +46,7 @@ def decode_qr_from_image_object(img: Image.Image) -> list[str]:
 
     except Exception as e:
         print(f"An error occurred during QR decoding: {e}")
-        return [] # Return empty list on error
+        return []
 
     return decoded_values
 
@@ -124,75 +124,3 @@ def decode_qr_from_base64(base64_string: str) -> list[str]:
         # Catches potential errors during bytes handling or image processing
         print(f"Error processing Base64 image data: {e}")
         return []
-
-# --- Example Usage ---
-if __name__ == "__main__":
-
-    # --- Example 1: Decoding from a file ---
-    # First, create a dummy QR code image file (requires 'qrcode' library: pip install "qrcode[pil]")
-    try:
-        import qrcode
-        qr_data_to_encode = "Hello from file!"
-        qr_img = qrcode.make(qr_data_to_encode)
-        dummy_file_path = "temp_qrcode.png"
-        qr_img.save(dummy_file_path)
-        print(f"Generated dummy QR code file: {dummy_file_path} with data: '{qr_data_to_encode}'")
-
-        print(f"\nDecoding QR from file: {dummy_file_path}")
-        decoded_data_list_file = decode_qr_from_file(dummy_file_path)
-
-        if decoded_data_list_file:
-            print("Successfully decoded:")
-            for data in decoded_data_list_file:
-                print(f"  - '{data}'")
-        else:
-            print("Could not decode QR code from file or none found.")
-
-    except ImportError:
-        print("\nSkipping file generation example: 'qrcode' library not installed.")
-    except Exception as e:
-        print(f"\nError during file generation example: {e}")
-
-
-    # --- Example 2: Decoding from a Base64 string ---
-    # Let's generate a Base64 string first (using the function from the previous request)
-    try:
-        import qrcode # Need qrcode lib again
-
-        qr_data_to_encode_b64 = "https://example.com/base64_test"
-        qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_L)
-        qr.add_data(qr_data_to_encode_b64)
-        qr.make(fit=True)
-        img_b64 = qr.make_image(fill_color="black", back_color="white")
-
-        buffered = io.BytesIO()
-        img_b64.save(buffered, format="PNG")
-        img_bytes = buffered.getvalue()
-        base64_encoded_qr = base64.b64encode(img_bytes).decode('utf-8')
-
-        print(f"\nGenerated dummy Base64 QR code for data: '{qr_data_to_encode_b64}'")
-        # print(f"Base64 String (truncated): {base64_encoded_qr[:60]}...") # Optional: print the string
-
-        print("\nDecoding QR from Base64 string...")
-        decoded_data_list_b64 = decode_qr_from_base64(base64_encoded_qr)
-
-        if decoded_data_list_b64:
-            print("Successfully decoded:")
-            for data in decoded_data_list_b64:
-                print(f"  - '{data}'")
-        else:
-            print("Could not decode QR code from Base64 string or none found.")
-
-    except ImportError:
-        print("\nSkipping Base64 generation example: 'qrcode' library not installed.")
-    except Exception as e:
-        print(f"\nError during Base64 generation example: {e}")
-
-
-    # --- Example 3: File not found ---
-    print("\nDecoding QR from non-existent file:")
-    decode_qr_from_file("non_existent_file.png")
-
-    # --- Example 4: Invalid Base64 ---
-    print("\nDecoding QR from invalid Base64:")
-    decode_qr_from_base64("this is not valid base64!@#$")
