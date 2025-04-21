@@ -4,7 +4,7 @@ from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
 from ..config.database import Base
- 
+
 class QR(Base):
     __tablename__ = "qr"
     id = Column(String, primary_key=True, nullable=False, unique=True)
