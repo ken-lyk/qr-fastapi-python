@@ -1,12 +1,12 @@
 from datetime import datetime
 import uuid
-from fastapi import APIRouter, Depends, File, UploadFile, status, HTTPException
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import Annotated, List
 
 from ..utility import oauth2, qrUtil
 from ..config import database
-from ..schemas import qrSchemas
+from ..schemas import qrSchemas, schemas
 from ..models import qrModel, userModel
 from ..utility.enums import QRSourceEnum
 
@@ -30,12 +30,12 @@ def get_qr(id: str, db: Session = Depends(database.get_db), current_user: userMo
     return qr
 
 @router.get('/', response_model= List[qrSchemas.QR])
-def get_qr(db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+def get_qr(filter_query: Annotated[schemas.FilterParams, Query()], db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     isAdmin = oauth2.isAdmin(current_user)
     if isAdmin:  
-        qrList = db.query(qrModel.QR).all()
+        qrList = db.query(qrModel.QR).offset(filter_query.offset).limit(filter_query.limit).all()
     else:
-        qrList = db.query(qrModel.QR).filter(qrModel.QR.user_id == current_user.id).all()
+        qrList = db.query(qrModel.QR).offset(filter_query.offset).limit(filter_query.limit).filter(qrModel.QR.user_id == current_user.id).all()
         
     if len(qrList) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

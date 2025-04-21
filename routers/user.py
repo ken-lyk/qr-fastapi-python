@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Response
+from fastapi import APIRouter, Depends, status, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import Annotated, List
 
 from ..utility import oauth2
 from ..config import database
-from ..schemas import userSchemas
+from ..schemas import userSchemas, schemas
 from ..models import userModel
 
 router = APIRouter(
@@ -27,11 +27,11 @@ def get_user(id: str, db: Session = Depends(database.get_db), current_user: user
 
 
 @router.get('/', response_model= List[userSchemas.User])
-def get_user(db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+def get_user(filter_query: Annotated[schemas.FilterParams, Query()], db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
-    userList = db.query(userModel.User).all()
+    userList = db.query(userModel.User).offset(filter_query.offset).limit(filter_query.limit).all()
     if len(userList) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"No user list")
