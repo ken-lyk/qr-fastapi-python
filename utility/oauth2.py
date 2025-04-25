@@ -37,7 +37,6 @@ def verify_access_token(token: str, credentials_exception):
         id: str = payload.get("sub")
         name: str = payload.get("name")
         role: str = payload.get("role")
-        print('id', id)
         if id is None:
             raise credentials_exception
         token_data = schemas.TokenData(id=id, role=role, name=name)

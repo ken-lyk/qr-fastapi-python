@@ -9,4 +9,3 @@ pymysql
 pyjwt
 pyzbar
 Pillow
-pydantic_settings

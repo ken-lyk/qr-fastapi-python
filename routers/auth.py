@@ -18,6 +18,8 @@ router = APIRouter(
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+database_dependency: Session = Depends(database.get_db)
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifies a plain password against a hashed password."""
     return pwd_context.verify(plain_password, hashed_password)
@@ -28,7 +30,7 @@ def get_password_hash(password: str) -> str:
 
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, response_model=userSchemas.User)
-def login(userRegisterObject: userSchemas.UserCreate, db: Session = Depends(database.get_db)):
+def login(userRegisterObject: userSchemas.UserCreate, db = database_dependency):
     # Check if user already exists
     existingUser = db.query(userModel.User).filter(userModel.User.email == userRegisterObject.email).first()
     if existingUser:
@@ -57,7 +59,7 @@ def login(userRegisterObject: userSchemas.UserCreate, db: Session = Depends(data
     return newUser
 
 @router.post('/login', response_model=schemas.Token)
-def login(userLoginObject: userSchemas.UserLoginObject, db: Session = Depends(database.get_db)):
+def login(userLoginObject: userSchemas.UserLoginObject, db = database_dependency):
     existingUser = db.query(userModel.User).filter(userModel.User.email == userLoginObject.email).first()
     
     if not existingUser or not verify_password(userLoginObject.password, existingUser.password):
@@ -82,7 +84,7 @@ def login(userLoginObject: userSchemas.UserLoginObject, db: Session = Depends(da
 
 
 @router.post('/token', response_model=schemas.Token)
-def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
+def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db = database_dependency):
 
     existingUser = db.query(userModel.User).filter(userModel.User.email == user_credentials.username).first()
     

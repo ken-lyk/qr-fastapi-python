@@ -12,8 +12,12 @@ router = APIRouter(
     tags=['Users']
 )
 
+database_dependency: Session = Depends(database.get_db)
+
+get_user_dependency: userModel.User = Depends(oauth2.get_current_user)
+
 @router.get('/{id}', response_model=userSchemas.User)
-def get_user(id: str, db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+def get_user(id: str, db = database_dependency, current_user = get_user_dependency):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
@@ -27,7 +31,7 @@ def get_user(id: str, db: Session = Depends(database.get_db), current_user: user
 
 
 @router.get('/', response_model= List[userSchemas.User])
-def get_user(filter_query: Annotated[schemas.FilterParams, Query()], db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+def get_user(filter_query: Annotated[schemas.FilterParams, Query()], db = database_dependency, current_user = get_user_dependency):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
@@ -39,7 +43,7 @@ def get_user(filter_query: Annotated[schemas.FilterParams, Query()], db: Session
     return userList
 
 @router.delete('/{id}', status_code=status.HTTP_200_OK)
-def delete_user(id: str,db: Session = Depends(database.get_db), current_user: userModel.User = Depends(oauth2.get_current_user)):
+def delete_user(id: str,db = database_dependency, current_user = get_user_dependency):
     if not oauth2.isAdmin(current_user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"User is not admin")
